@@ -75,7 +75,11 @@ def open_setup_window():
         try:
             localIpAddr.set(existingData['LOCAL_IPADDRESS'])
             localPort.set(existingData['LOCAL_PORT'])
-            
+            msgAddr.set(existingData['CLOCKINDEXADDRESS'])
+            clipAddr.set(existingData['CLIPADDRESS'])
+            clipIndex.set(existingData['CLIPINDEX'])
+        except Exception as e:
+            print("Cannot load existing settings.", e)
 
     #endregion
     #region on screen elements
@@ -111,6 +115,9 @@ def open_setup_window():
 
     saveButton = customtkinter.CTkButton(footerFrame, width=200, height=50, corner_radius=20, text="Save Configuration", command=saveVariables)
     saveButton.pack()
+
+    loadExistingButton = customtkinter.CTkButton(footerFrame, width=150, height=20, corner_radius=10, text="Load Existing Data", command=loadExstingData)
+    loadExistingButton.pack()
 
     ##setupWindow.mainloop()
 

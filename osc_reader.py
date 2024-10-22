@@ -59,7 +59,9 @@ footerFrame.pack(padx = 20, pady = 20, anchor = "n")
 ipAddr = tkinter.StringVar()
 port = tkinter.StringVar()
 msgAddr = tkinter.StringVar()
+clipNameAddr = tkinter.StringVar()
 oscMsg = tkinter.StringVar()
+oscNameMsg = tkinter.StringVar()
 oscArgs = tkinter.StringVar()
 osc_arg1 = tkinter.StringVar()
 osc_arg2 = tkinter.StringVar()
@@ -103,7 +105,8 @@ def retrieve_settings():
     try:
         ipAddr.set(settings['LOCAL_IPADDRESS'])
         port.set(settings['LOCAL_PORT'])
-        msgAddr.set(settings['MSGADDRESS'])
+        msgAddr.set(settings['CLOCKINDEXADDRESS'])
+        clipNameAddr.set(settings['CLIPINDEXADDRESS'])
     except Exception as e:
         print("Cannot Load Existing Settings.", e)
         tkinter.messagebox.showwarning(title="No Existing Settings", message="No Existing Settings", default="Ok")
@@ -120,6 +123,7 @@ def oscServerThread():
     ip = ipAddr.get()
     portNo = int(port.get())
     msg = msgAddr.get()
+    clipNameMsg = clipNameAddr.get()
     osc_thread = threading.Thread(target=run_osc_server, args=(ip, portNo, msg), daemon=True)
     osc_thread.start()
 
@@ -131,6 +135,9 @@ headerLabel.pack()
 
 messageLabel = customtkinter.CTkLabel(displayFrame, textvariable=oscMsg)
 messageLabel.grid(row=0, column=0, sticky = "w")
+
+clipNameLabel = customtkinter.CTkLabel(displayFrame, textvariable=clipName)
+clipNameLabel.grid(row=1, column=0, columnspan=2)
 
 label_arg1 = customtkinter.CTkLabel(displayFrame, textvariable=arg1_display)
 label_arg1.grid(row=2, column=0, sticky = "w")

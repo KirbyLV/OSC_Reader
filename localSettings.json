@@ -1,1 +1,1 @@
-{"LOCAL_IPADDRESS": "172.16.16.213", "LOCAL_PORT": "8000", "MSGADDRESS": "", "CLIPADDRESS": "", "CLIPINDEX": "1", "CLIPINDEXADDRESS": "/millumin/index:1/mediastarted"}
+{"LOCAL_IPADDRESS": "172.16.16.213", "LOCAL_PORT": "8000", "MSGADDRESS": "/millumin/index:3/media/time", "CLIPADDRESS": "", "CLIPINDEX": "1", "CLIPINDEXADDRESS": "/millumin/index:1/mediastarted", "CLOCKINDEXADDRESS": "/millumin/index:1/media/time"}
