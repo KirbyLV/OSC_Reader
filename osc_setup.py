@@ -58,7 +58,7 @@ def open_setup_window():
         settings['MSGADDRESS'] = msgAddr.get().strip()
         settings['CLIPADDRESS'] = clipAddr.get().strip()
         settings['CLIPINDEX'] = clipIndex.get().strip()
-        clipIndexAddress = f"/millumin/index:{clipIndex.get()}/mediastarted"
+        clipIndexAddress = f"/millumin/index:{clipIndex.get()}/mediaStarted"
         settings['CLIPINDEXADDRESS'] = clipIndexAddress
         clockIndexAddress = f"/millumin/index:{clipIndex.get()}/media/time"
         settings['CLOCKINDEXADDRESS'] = clockIndexAddress
@@ -89,12 +89,12 @@ def open_setup_window():
 
     localIpLabel = customtkinter.CTkLabel(settingsFrame, text="Local IP Address:", padx = 10, pady = 10)
     localPortLabel = customtkinter.CTkLabel(settingsFrame, text="Local Port:", padx = 10, pady = 10)
-    msgAddrLabel = customtkinter.CTkLabel(settingsFrame, text="OSC Clock Address:", padx = 10, pady = 10)
+    #msgAddrLabel = customtkinter.CTkLabel(settingsFrame, text="OSC Clock Address:", padx = 10, pady = 10)
     clipAddrLabel = customtkinter.CTkLabel(settingsFrame, text="OSC Clip Name Address: ", padx = 10, pady = 10)
 
     localIpLabel.grid(row = 0, column = 0, sticky = "E")
     localPortLabel.grid(row = 1, column = 0, sticky = "E")
-    msgAddrLabel.grid(row = 2, column = 0, sticky = "E")
+    #msgAddrLabel.grid(row = 2, column = 0, sticky = "E")
     clipAddrLabel.grid(row=3, column=0, sticky="E")
 
     localIpAddr.set(ipList[0])
@@ -104,8 +104,8 @@ def open_setup_window():
     localPortEntry = customtkinter.CTkEntry(settingsFrame, width=200, textvariable=localPort)
     localPortEntry.grid(row = 1, column = 1, sticky = "W")
 
-    msgAddrEntry = customtkinter.CTkEntry(settingsFrame, placeholder_text="/message/address/", width=300, textvariable=msgAddr)
-    msgAddrEntry.grid(row = 2, column = 1, sticky = "W")
+    #msgAddrEntry = customtkinter.CTkEntry(settingsFrame, placeholder_text="/message/address/", width=300, textvariable=msgAddr)
+    #msgAddrEntry.grid(row = 2, column = 1, sticky = "W")
 
     clipIndexDropdown = customtkinter.CTkOptionMenu(settingsFrame, variable=clipIndex, values=["1", "2", "3", "4", "5", "6", "7", "8", "9"])
     clipIndexDropdown.grid(row=3, column=1, sticky="W")

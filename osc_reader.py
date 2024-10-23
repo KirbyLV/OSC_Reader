@@ -39,7 +39,7 @@ displayFrame = customtkinter.CTkFrame(master=bgFrame)
 displayFrame.pack(padx = 0, pady = 20, anchor = "n")
 
 currentSettingsFrame = customtkinter.CTkFrame(master=bgFrame)
-currentSettingsFrame.pack(padx=0, pady=20, anchor = "n")
+currentSettingsFrame.pack(padx=0, pady=20, anchor = "n", fill="both", expand=True)
 
 ipFrame = customtkinter.CTkFrame(master=currentSettingsFrame)
 ipFrame.grid(row=0, column=0)
@@ -52,6 +52,9 @@ msgFrame.grid(row=0, column=2)
 
 footerFrame = customtkinter.CTkFrame(master=bgFrame)
 footerFrame.pack(padx = 20, pady = 20, anchor = "n")
+
+scalerFrame = customtkinter.CTkFrame(master=root)
+scalerFrame.pack(anchor="s")
 
 #endregion
 #region Variables and Fucntions
@@ -69,6 +72,8 @@ countdown = tkinter.StringVar()
 arg1_display = tkinter.StringVar()
 arg2_display = tkinter.StringVar()
 clipName = tkinter.StringVar()
+zoomScale = tkinter.DoubleVar()
+
 
 def handle_osc_message(addr, arg1, arg2):
     oscMsg.set(addr)
@@ -91,9 +96,14 @@ def handle_osc_message(addr, arg1, arg2):
     except ValueError:
         countdown.set("Args could not be converted to floats")
 
-def run_osc_server(ip, port, msg_addr):
+def handle_osc_name(addr, *args):
+    oscNameMsg.set(addr)
+    clipName.set(args[1])
+
+def run_osc_server(ip, port, msg_addr1, msg_addr2):
     disp = dispatcher.Dispatcher()
-    disp.map(msg_addr, handle_osc_message)
+    disp.map(msg_addr1, handle_osc_message)
+    disp.map(msg_addr2, handle_osc_name)
     server = osc_server.ThreadingOSCUDPServer((ip, port), disp)
     print(f"Serving on {server.server_address}")
     server.serve_forever()
@@ -122,10 +132,14 @@ def retrieve_settings():
 def oscServerThread():
     ip = ipAddr.get()
     portNo = int(port.get())
-    msg = msgAddr.get()
-    clipNameMsg = clipNameAddr.get()
-    osc_thread = threading.Thread(target=run_osc_server, args=(ip, portNo, msg), daemon=True)
+    msgClock = msgAddr.get()
+    msgName = clipNameAddr.get()
+    osc_thread = threading.Thread(target=run_osc_server, args=(ip, portNo, msgClock, msgName), daemon=True)
     osc_thread.start()
+
+def windowZoom(zoomValue):
+    zoomScale.set(zoomValue)
+    customtkinter.set_widget_scaling(zoomValue)
 
 #endregion
 #region on screen elements
@@ -133,17 +147,14 @@ def oscServerThread():
 headerLabel = customtkinter.CTkLabel(headerFrame, text="OSC Reader")
 headerLabel.pack()
 
-messageLabel = customtkinter.CTkLabel(displayFrame, textvariable=oscMsg)
-messageLabel.grid(row=0, column=0, sticky = "w")
-
-clipNameLabel = customtkinter.CTkLabel(displayFrame, textvariable=clipName)
+clipNameLabel = customtkinter.CTkLabel(displayFrame, textvariable=clipName, font=('Arial', 24))
 clipNameLabel.grid(row=1, column=0, columnspan=2)
 
 label_arg1 = customtkinter.CTkLabel(displayFrame, textvariable=arg1_display)
-label_arg1.grid(row=2, column=0, sticky = "w")
+label_arg1.grid(row=2, column=0, padx = 10)
 
 label_arg2 = customtkinter.CTkLabel(displayFrame, textvariable=arg2_display)
-label_arg2.grid(row=2, column=1, sticky = "w")
+label_arg2.grid(row=2, column=1, padx = 10)
 
 label_countdown = customtkinter.CTkLabel(displayFrame, text="Time Remaining: ")
 label_countdown.grid(row=3, column=0, sticky="e")
@@ -179,6 +190,14 @@ loadSettings.grid(row=0, column=1)
 
 runApp = customtkinter.CTkButton(footerFrame, width=200, height=50, corner_radius=20, text="Run OSC Server", command=oscServerThread, state='disabled')
 runApp.grid(row=0, column=2)
+
+#zoom slider
+zoomLabel = customtkinter.CTkLabel(scalerFrame, text="Scale Display Data:")
+zoomLabel.grid(row=0, column=0)
+
+zoomSlider = customtkinter.CTkSlider(master=scalerFrame, from_=1, to=3, command=windowZoom)
+zoomSlider.grid(row=0, column=1)
+
 #endregion
 
 root.mainloop()
