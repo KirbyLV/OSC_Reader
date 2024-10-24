@@ -6,10 +6,10 @@ import sys
 import json
 import tkinter.messagebox
 
-#def install(package):
-#    subprocess.check_call([sys.executable, "-m", "pip", "install", '-r', package])
-#package = 'requirements.txt'
-#install(package)
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", '-r', package])
+package = 'requirements.txt'
+install(package)
 
 import tkinter
 import customtkinter

@@ -6,3 +6,4 @@
 /.venv
 /signing
 setup.py
+/.vscode
