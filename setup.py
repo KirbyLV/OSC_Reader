@@ -5,13 +5,27 @@ Usage:
     python setup.py py2app
 """
 
+import os
 from setuptools import setup
 
 APP = ['OSC Countdown.py']
-DATA_FILES = ['localSettings.json', 'Oceanix.json', 'TrojanBlue.json']
+DATA_FILES = ['localSettings.json', 'Oceanix.json', 'TrojanBlue.json', 'entitlements.plist']
 OPTIONS = {
-    'iconfile':'timerIcns.icns'
-}
+    'iconfile':'timerIcns.icns',
+    'packages': ["tkinter", "customtkinter"],
+    'argv_emulation': True,
+    'plist': {
+        'CFBundleIdentifier': 'com.joshspodick.OSCCountdown',
+        'CFBundleName': 'OSC Countdown',
+        'CFBundleVersion': '1.0.0',
+        'CFBundleShortVersionString': '1.0.0',
+        'CFBundleExecutable': 'OSC Countdown',
+        'CFBundleIconFile': 'timerIcns.icns',
+        'com.apple.security.cs.allow-unsigned-executable-memory': True,
+        'com.apple.security.cs.disable-library-validation': True,
+        'com.apple.security.cs.allow-jit': True
+    }
+    }
 
 setup(
     app=APP,
@@ -19,3 +33,5 @@ setup(
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
 )
+
+os.system('find "dist/OSC Countdown.app" -iname "*.so" -or -iname "*.dylib" | while read libfile; do codesign -s "C5FB8AC4BCAA27BDA87BED97A1C48AD3381B447B" --timestamp -o runtime --entitlements Info.plist "${libfile}"; done;')
