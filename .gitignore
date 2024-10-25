@@ -7,3 +7,5 @@
 /signing
 setup.py
 /.vscode
+*.zip
+/Mac_Dist
