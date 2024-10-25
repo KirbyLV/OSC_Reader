@@ -5,7 +5,7 @@ a = Analysis(
     ['OSC Countdown.py'],
     pathex=[],
     binaries=[],
-    datas=[('/Users/jspodick/Documents/GitHub/OSC_Reader/.venv/lib/python3.12/site-packages/customtkinter', 'customtkinter/'), ('/Users/jspodick/Documents/GitHub/OSC_Reader/Oceanix.json', '.'), ('/Users/jspodick/Documents/GitHub/OSC_Reader/TrojanBlue.json', '.')],
+    datas=[('/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/customtkinter', 'customtkinter/'), ('localSettings.json', '.'), ('Oceanix.json', '.'), ('TrojanBlue.json', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -43,9 +43,25 @@ coll = COLLECT(
     upx_exclude=[],
     name='OSC Countdown',
 )
+info = {
+    'CFBundleName':'OSC Countdown',
+    'CFBundleDisplayName':'OSC Countdown',
+    'CFBundleVersion':'1.0',
+    'CFBundleShortVersionString':'1.0',
+    'NSRequiresAquaSystemAppearance':'No',
+    'NSHighResolutionCapable':'True'
+}
 app = BUNDLE(
     coll,
     name='OSC Countdown.app',
     icon='timerIcns.icns',
-    bundle_identifier=None,
+    bundle_identifier='com.joshspodick.OSCReader',
+    info_plst={
+    'CFBundleName':'OSC Countdown',
+    'CFBundleDisplayName':'OSC Countdown',
+    'CFBundleVersion':'1.0',
+    'CFBundleShortVersionString':'1.0',
+    'NSRequiresAquaSystemAppearance':'No',
+    'NSHighResolutionCapable':'True'
+    }
 )

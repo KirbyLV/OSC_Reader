@@ -3,13 +3,14 @@
 import threading
 import subprocess
 import sys
+import os
 import json
 import tkinter.messagebox
 
-def install(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", '-r', package])
-package = 'requirements.txt'
-install(package)
+#def install(package):
+#    subprocess.check_call([sys.executable, "-m", "pip", "install", '-r', package])
+#package = 'requirements.txt'
+#install(package)
 
 import tkinter
 import customtkinter
@@ -19,11 +20,16 @@ from pythonosc import osc_server
 
 from osc_setup import open_setup_window
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
 #endregion
 #region Window Setup
 
 customtkinter.set_appearance_mode("Dark")
-customtkinter.set_default_color_theme("Oceanix.json")
+customtkinter.set_default_color_theme(resource_path("Oceanix.json"))
 
 root = customtkinter.CTk()
 root.minsize(width=720, height=540)
@@ -73,7 +79,11 @@ arg1_display = tkinter.StringVar()
 arg2_display = tkinter.StringVar()
 clipName = tkinter.StringVar()
 zoomScale = tkinter.DoubleVar()
+isServer = tkinter.BooleanVar()
 
+isServer.set(False)
+server = None
+server_thread = None
 
 def handle_osc_message(addr, arg1, arg2):
     oscMsg.set(addr)
@@ -101,15 +111,34 @@ def handle_osc_name(addr, *args):
     clipName.set(args[1])
 
 def run_osc_server(ip, port, msg_addr1, msg_addr2):
+    global server, server_thread
     disp = dispatcher.Dispatcher()
     disp.map(msg_addr1, handle_osc_message)
     disp.map(msg_addr2, handle_osc_name)
     server = osc_server.ThreadingOSCUDPServer((ip, port), disp)
     print(f"Serving on {server.server_address}")
     server.serve_forever()
+    reloadServer.configure(state ='normal')
+    stopServer.configure(state='normal')
+
+def stop_osc_server():
+    global server
+    if server:
+        print("Stopping the server...")
+        server.shutdown()
+        server.server_close()
+        server = None
+        isServer.set(False)
+
+def reload_server():
+    stop_osc_server()
+    isServer.set(False)
+    oscServerThread()
+    isServer.set(True)
+
 
 def retrieve_settings():
-    data = open('localSettings.json')
+    data = open(resource_path('localSettings.json'))
     settings = json.load(data)
     data.close()
     try:
@@ -134,8 +163,16 @@ def oscServerThread():
     portNo = int(port.get())
     msgClock = msgAddr.get()
     msgName = clipNameAddr.get()
+    isServer.set(True)
     osc_thread = threading.Thread(target=run_osc_server, args=(ip, portNo, msgClock, msgName), daemon=True)
     osc_thread.start()
+
+def update_status_indicator():
+    if isServer.get():
+        isRunningStatus.configure(bg_color="green")
+    else:
+        isRunningStatus.configure(bg_color="red")
+    root.after(100, update_status_indicator)
 
 def windowZoom(zoomValue):
     zoomScale.set(zoomValue)
@@ -191,6 +228,18 @@ loadSettings.grid(row=0, column=1)
 runApp = customtkinter.CTkButton(footerFrame, width=200, height=50, corner_radius=20, text="Run OSC Server", command=oscServerThread, state='disabled')
 runApp.grid(row=0, column=2)
 
+reloadServer = customtkinter.CTkButton(footerFrame, width=200, height=50, corner_radius=20, text="Reload Server", command=reload_server)
+reloadServer.grid(row=1, column=1)
+
+stopServer = customtkinter.CTkButton(footerFrame, width=200, height=50, corner_radius=20, text="Stop Server", command=stop_osc_server)
+stopServer.grid(row=1, column=2)
+
+isRunningLabel = customtkinter.CTkLabel(footerFrame, text="Server Runnimg:")
+isRunningLabel.grid(row=2, column=1, sticky="e")
+
+isRunningStatus = customtkinter.CTkLabel(footerFrame, text="", width=50, height=50, corner_radius=25)
+isRunningStatus.grid(row=2, column=2, sticky="w")
+
 #zoom slider
 zoomLabel = customtkinter.CTkLabel(scalerFrame, text="Scale Display Data:")
 zoomLabel.grid(row=0, column=0)
@@ -199,5 +248,7 @@ zoomSlider = customtkinter.CTkSlider(master=scalerFrame, from_=1, to=3, command=
 zoomSlider.grid(row=0, column=1)
 
 #endregion
+
+update_status_indicator()
 
 root.mainloop()

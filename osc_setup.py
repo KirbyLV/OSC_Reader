@@ -2,11 +2,18 @@ import tkinter
 import customtkinter
 import json
 import socket
+import os
+import sys
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 def open_setup_window():
     #region window setup
     customtkinter.set_appearance_mode("Dark")
-    customtkinter.set_default_color_theme("TrojanBlue.json")
+    customtkinter.set_default_color_theme(resource_path("TrojanBlue.json"))
 
     setupWindow = customtkinter.CTkToplevel()
     setupWindow.minsize(width=540, height=300)
@@ -50,7 +57,7 @@ def open_setup_window():
         '''
 
     settings = json.loads(defaultSettings)
-    settingsPath = 'localSettings.json'
+    settingsPath = resource_path('localSettings.json')
 
     def saveVariables():
         settings['LOCAL_IPADDRESS'] = localIpAddr.get().strip()
