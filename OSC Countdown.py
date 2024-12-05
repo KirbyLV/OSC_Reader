@@ -7,10 +7,10 @@ import os
 import json
 import tkinter.messagebox
 
-#def install(package):
-#    subprocess.check_call([sys.executable, "-m", "pip", "install", '-r', package])
-#package = 'requirements.txt'
-#install(package)
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", '-r', package])
+package = 'requirements.txt'
+install(package)
 
 import tkinter
 import customtkinter
@@ -102,7 +102,7 @@ def handle_osc_message(addr, arg1, arg2):
         clipTime = float(osc_arg2.get().strip())
         currentTime = float(osc_arg1.get().strip())
         countdownTime = round(clipTime - currentTime, 1)
-        countdown.set(str(countdownTime))
+        countdown.set(str(seconds_to_minutes(countdownTime)))
     except ValueError:
         countdown.set("Args could not be converted to floats")
 
@@ -177,6 +177,15 @@ def update_status_indicator():
 def windowZoom(zoomValue):
     zoomScale.set(zoomValue)
     customtkinter.set_widget_scaling(zoomValue)
+
+def seconds_to_minutes(time_str):
+    try:
+        total_seconds = float(time_str)
+        minutes = int(total_seconds // 60)
+        seconds = total_seconds % 60
+        return f"{minutes}:{seconds:.2f}"
+    except ValueError:
+            return "Invalid Input"
 
 #endregion
 #region on screen elements
